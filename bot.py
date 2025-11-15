@@ -1,6 +1,8 @@
 import io
 import json
 import os
+import time
+from concurrent.futures.process import ProcessPoolExecutor
 from os import getenv
 import requests
 import cv2
@@ -101,7 +103,10 @@ def save_images():
     park_playlist = next(filter(lambda p: p["name"] == "parking", playlists))
     park_playlist_id = park_playlist["id"]
     cameras = client.get_cameras_from_playlist(park_playlist_id)
-    frames = [get_frame_from_stream(camera["stream_url"]) for camera in cameras]
+    stream_urls = [camera["stream_url"] for camera in cameras]
+    with ProcessPoolExecutor(max_workers=len(stream_urls)) as executor:
+        future_results = list(executor.map(get_frame_from_stream, stream_urls))
+    frames = [frame for frame in future_results if frame is not None]
     return frames
 
 
@@ -133,8 +138,11 @@ async def get_camera_images(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🔄 Получаю фото с камер...")
 
     try:
+        start_time = time.time()
         # Получаем кадры с камер
         frames = save_images()
+        finish_time = time.time()
+        await update.message.reply_text(f"⌛ Времени заняло {finish_time - start_time:.2f}s")
 
         if not frames or all(frame is None for frame in frames):
             await update.message.reply_text("❌ Не удалось получить фото с камер")
