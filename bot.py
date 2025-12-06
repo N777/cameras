@@ -19,6 +19,8 @@ load_dotenv()
 
 # Токен бота из переменных окружения
 BOT_TOKEN = getenv("BOT_TOKEN")
+WHITE_LIST_USER_IDS = getenv("WHITE_LIST_USER_IDS")
+WHITE_LIST_USER_IDS = WHITE_LIST_USER_IDS.split(',') if WHITE_LIST_USER_IDS else [611120147, ]
 
 
 # Функции для Telegram бота
@@ -36,6 +38,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def create_new_etalon(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
+    if not (update.effective_user and update.effective_user.id in WHITE_LIST_USER_IDS):
+        await update.message.reply_text("403 Forbidden")
+        return
     await update.message.reply_text("Generate new etalon.")
     try:
         start_time = time.time()
@@ -50,7 +55,7 @@ async def create_new_etalon(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_media_group(media=media_group)
 
-        await update.message.reply_text(f"New etalon created")
+        await update.message.reply_text("New etalon created")
     except Exception:
         await update.message.reply_text("Error while generate new etalon.")
 
