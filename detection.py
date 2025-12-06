@@ -143,8 +143,8 @@ def detect_free_spaces(reference_json, cur_img):
             free_spaces.append(p)
 
     # draw results
-    for box in parking_spaces:
-        draw_bbox(cur_img, box, "Parking", (0, 255, 0))
+    # for box in parking_spaces:
+    #     draw_bbox(cur_img, box, "Parking", (0, 255, 0))
 
     for box in free_spaces:
         draw_bbox(cur_img, box, "FREE", (0, 0, 255))
