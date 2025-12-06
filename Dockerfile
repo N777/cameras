@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM ultralytics/ultralytics:latest-cpu
 
 WORKDIR /app
 
