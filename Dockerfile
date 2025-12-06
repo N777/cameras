@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Копирование исходного кода
 COPY *.py ./
 # Копирование исходного кода
-COPY etalon ./
+COPY etalon /app/etalon
 
 # Создание директории для данных
 RUN mkdir -p /app/data

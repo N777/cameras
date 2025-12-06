@@ -13,6 +13,7 @@ from telegram.ext import (
     ContextTypes,
 )
 
+from detection import init_model
 from evo import save_images, generate_etalon_for_cameras
 
 load_dotenv()
@@ -148,6 +149,7 @@ def main():
     if not BOT_TOKEN:
         print("Ошибка: BOT_TOKEN не найден в переменных окружения")
         return
+    init_model()
 
     # Создаем приложение
     application = Application.builder().token(BOT_TOKEN).build()

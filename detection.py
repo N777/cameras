@@ -151,6 +151,8 @@ def detect_free_spaces(reference_json, cur_img):
 
     return cur_img
 
+def init_model():
+    YOLO(MODEL_PATH)
 
 # ------------------------------------------------------
 # MAIN
