@@ -2,7 +2,8 @@ import cv2
 import json
 from ultralytics import YOLO
 
-MODEL_PATH = "yolo11n.pt"
+ETALON_MODEL_PATH = "yolo11m.pt"
+DETECT_MODEL_PATH = "yolo11n.pt"
 
 
 # ------------------------------------------------------
@@ -96,7 +97,7 @@ def load_reference_json(json_path):
 # Extract reference boxes from image + save JSON
 # ------------------------------------------------------
 def create_reference(ref_img, output_json):
-    model = YOLO(MODEL_PATH)
+    model = YOLO(ETALON_MODEL_PATH)
 
     ref_h, ref_w = ref_img.shape[:2]
 
@@ -118,7 +119,7 @@ def create_reference(ref_img, output_json):
 # Detect free spaces using saved reference JSON
 # ------------------------------------------------------
 def detect_free_spaces(reference_json, cur_img):
-    model = YOLO(MODEL_PATH)
+    model = YOLO(DETECT_MODEL_PATH)
 
     # load parking-space reference
     ref_w, ref_h, ref_boxes_norm = load_reference_json(reference_json)
@@ -152,7 +153,8 @@ def detect_free_spaces(reference_json, cur_img):
     return cur_img
 
 def init_model():
-    YOLO(MODEL_PATH)
+    YOLO(DETECT_MODEL_PATH)
+    YOLO(ETALON_MODEL_PATH)
 
 # ------------------------------------------------------
 # MAIN
