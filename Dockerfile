@@ -13,12 +13,27 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-# Копирование файлов зависимостей
-COPY requirements.txt ./
+RUN pip install uv --no-cache-dir
 
-# Установка зависимостей
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_SYSTEM_PYTHON=true
+
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
+
+# Omit development dependencies
+ENV UV_NO_DEV=1
+
+# Ensure installed tools can be executed out of the box
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
+
+COPY ./uv.lock \
+    ./pyproject.toml \
+    ./
+
+RUN uv venv --system-site-packages
+RUN uv sync
 
 # Копирование исходного кода
 COPY *.py ./
@@ -31,4 +46,4 @@ RUN mkdir -p /app/data
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-CMD ["python", "bot.py"]
+CMD ["uv", "run", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "80"]

@@ -5,14 +5,12 @@ description = "Telegram bot for camera monitoring"
 requires-python = ">=3.11"
 
 dependencies = [
-    "python-telegram-bot==20.7",
+#    "python-telegram-bot==20.7",
     "opencv-python-headless==4.8.1.78",
     "numpy==1.24.3",
     "python-dotenv==1.0.0",
-    "pyjwt==2.8.0",
+    "jwt==1.4.0",
     "requests==2.31.0",
-    "ultralytics==8.3.235",
+#    "ultralytics==8.3.235",
+    "fastapi[standard]==0.127.0"
 ]
-
-[build-system]
-requires = ["setuptools", "wheel"]

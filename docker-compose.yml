@@ -1,10 +1,12 @@
 version: '3.8'
 
 services:
-  telegram-bot:
+  evo-bot:
     build: .
-    container_name: telegram-camera-bot
+    container_name: evo-bot
     restart: unless-stopped
+    ports:
+      - "8001:80"
     volumes:
       - ./data:/app/data
     environment:
