@@ -1,4 +1,4 @@
-FROM ultralytics/ultralytics:latest-cpu
+FROM ultralytics/ultralytics:8.3.241-cpu
 
 WORKDIR /app
 
@@ -39,6 +39,7 @@ RUN uv sync
 COPY *.py ./
 # Копирование исходного кода
 COPY etalon /app/etalon
+COPY static /app/static
 
 # Создание директории для данных
 RUN mkdir -p /app/data

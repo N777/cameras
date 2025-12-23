@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FastAPI Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .image-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .image-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .image-card img {
+            width: 90vw;
+            height: auto;
+            border-radius: 5px;
+        }
+        .caption {
+            margin-top: 10px;
+            color: #666;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .load-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .load-btn:hover {
+            background-color: #0056b3;
+        }
+        .load-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="controls">
+                <button id="loadBtn" class="load-btn" onclick="loadImages(false)">
+                    Загрузить фотографии
+                </button>
+                <button id="loadBtnDetect" class="load-btn" onclick="loadImages(true)">
+                    Загрузить фотографии detect
+                </button>
+            </div>
+        </div>
+        <div id="imageGrid" class="image-grid">
+            <!-- Здесь появятся фотографии -->
+        </div>
+    </div>
+
+    <script>
+        async function loadImages(detect) {
+            const btn = detect ? document.getElementById('loadBtnDetect') : document.getElementById('loadBtn');
+            const imageGrid = document.getElementById('imageGrid');
+
+            // Блокируем кнопку на время загрузки
+            const oldButtonText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Загрузка...';
+            imageGrid.innerHTML = '<p>Загрузка фотографий...</p>';
+
+            try {
+                let url = '/api/images';
+                if (detect) {
+                    url += '?detect=true';
+                }
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки изображений');
+                }
+
+                const images = await response.json();
+
+                // Очищаем контейнер
+                imageGrid.innerHTML = '';
+
+                // Добавляем каждое изображение
+                images.forEach(image => {
+                    const card = document.createElement('div');
+                    card.className = 'image-card';
+                    card.innerHTML = `
+                        <img src="data:image/jpeg;base64,${image}">
+                    `;
+                    imageGrid.appendChild(card);
+                });
+
+            } catch (error) {
+                imageGrid.innerHTML = `<p style="color: red;">Ошибка: ${error.message}</p>`;
+            } finally {
+                // Разблокируем кнопку
+                btn.disabled = false;
+                btn.textContent = oldButtonText;
+            }
+        }
+    </script>
+</body>
+</html>

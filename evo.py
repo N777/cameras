@@ -122,9 +122,12 @@ def generate_etalon_for_cameras():
     return frames
 
 
-def save_images():
+def get_images_from_stream(detect: bool):
     stream_urls = get_stream_urls()
     with ProcessPoolExecutor(max_workers=len(stream_urls)) as executor:
-        future_results = list(executor.map(get_frame_with_detect, stream_urls.items()))
+        if detect:
+            future_results = list(executor.map(get_frame_with_detect, stream_urls.items()))
+        else:
+            future_results = list(executor.map(get_frame_from_stream, stream_urls.values()))
     frames = [frame for frame in future_results if frame is not None]
     return frames

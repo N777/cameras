@@ -14,7 +14,7 @@ from telegram.ext import (
 )
 
 from detection import init_model
-from evo import save_images, generate_etalon_for_cameras
+from evo import get_images_from_stream, generate_etalon_for_cameras
 
 load_dotenv()
 
@@ -78,7 +78,7 @@ async def get_camera_images(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         start_time = time.time()
         # Получаем кадры с камер
-        frames = save_images()
+        frames = get_images_from_stream(detect=True)
         finish_time = time.time()
         await update.message.reply_text(
             f"⌛ Времени заняло {finish_time - start_time:.2f}s"
