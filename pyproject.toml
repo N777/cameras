@@ -11,6 +11,11 @@ dependencies = [
     "python-dotenv==1.0.0",
     "jwt==1.4.0",
     "requests==2.31.0",
-#    "ultralytics==8.3.235",
-    "fastapi[standard]==0.127.0"
+    "fastapi[standard]==0.127.0",
+    "apscheduler",
+    'redis',
+]
+[project.optional-dependencies]
+dev-libs = [
+    "ultralytics==8.3.235",
 ]

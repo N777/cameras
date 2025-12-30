@@ -37,7 +37,7 @@
             margin-bottom: 20px;
         }
         .load-btn {
-            padding: 10px 20px;
+            padding: 30px 20px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -67,6 +67,7 @@
             </div>
         </div>
         <div id="imageGrid" class="image-grid">
+            {%replace_block%}
             <!-- Здесь появятся фотографии -->
         </div>
     </div>
@@ -75,12 +76,14 @@
         async function loadImages(detect) {
             const btn = detect ? document.getElementById('loadBtnDetect') : document.getElementById('loadBtn');
             const imageGrid = document.getElementById('imageGrid');
+            const btns = document.getElementsByClassName('load-btn');
+            Array.from(btns).forEach(btn => {
+                btn.disabled = true;
+            });
 
             // Блокируем кнопку на время загрузки
             const oldButtonText = btn.textContent;
-            btn.disabled = true;
             btn.textContent = 'Загрузка...';
-            imageGrid.innerHTML = '<p>Загрузка фотографий...</p>';
 
             try {
                 let url = '/api/images';
@@ -111,7 +114,9 @@
                 imageGrid.innerHTML = `<p style="color: red;">Ошибка: ${error.message}</p>`;
             } finally {
                 // Разблокируем кнопку
-                btn.disabled = false;
+                Array.from(btns).forEach(btn => {
+                    btn.disabled = false;
+                });
                 btn.textContent = oldButtonText;
             }
         }

@@ -13,8 +13,29 @@ services:
       - TZ=Europe/Moscow
     env_file:
       - .env
+    networks:
+      - app-network
+    depends_on:
+      - redis
     logging:
       driver: "json-file"
       options:
         max-size: "1m"
         max-file: "3"
+  redis:
+    image: redis:8.4-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
