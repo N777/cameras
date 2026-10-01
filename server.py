@@ -1,12 +1,13 @@
 import logging
 from contextlib import asynccontextmanager
-
+from os import getenv
 
 import cv2
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from dotenv import load_dotenv
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 import base64
 
 from cache import update_images_in_cache, get_images_from_cache, set_images_in_cache
@@ -15,6 +16,7 @@ from evo import get_images_from_stream
 
 logger = logging.getLogger(__name__)
 scheduler = AsyncIOScheduler()
+load_dotenv()
 init_model()
 
 @asynccontextmanager
@@ -51,7 +53,11 @@ def encode_images_to_base64(frames):
             decode_frames.append(decode_frame)
     return decode_frames
 
-app = FastAPI(lifespan=lifespan)
+settings = {}
+USE_SCHEDULE = getenv("USE_SCHEDULE")
+if USE_SCHEDULE == 'true':
+    settings.update({'lifespan': lifespan})
+app = FastAPI(**settings)
 
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -81,3 +87,9 @@ def get_images(detect: bool = False):
     encoded_images = encode_images_to_base64(frames)
 
     return encoded_images
+
+@app.get("/api/subs/", response_class=PlainTextResponse)
+def get_subs():
+    with open("static/subs.txt", "r", encoding="utf-8") as f:
+        content = f.read()
+    return content
